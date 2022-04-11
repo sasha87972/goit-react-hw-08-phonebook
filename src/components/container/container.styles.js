@@ -1,8 +1,9 @@
 import styled from "styled-components";
 
-const TitleItem = styled.h1`
-  font-size: 40px;
-  font-weight: bold;
+const Box = styled.div`
+  min-height: calc(100vh - 70px);
+  padding: 15px;
+  background-color: #b6d0e2;
 `;
 
-export default TitleItem;
+export default Box;

@@ -1,20 +1,87 @@
+import { useEffect, lazy, Suspense } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { authSelectors, authOperations } from "./redux/auth";
+import AppBar from "./components/appBar";
 import Container from "./components/container";
-import ContactForm from "./components/contactForm";
-import ContactList from "./components/contactList";
-import Title from "./components/title";
-import Filter from "./components/filter";
+import Loader from "./components/loader";
+import PrivateRoute from "./routes/privateRoute";
+import PublicRoute from "./routes/publicRoute";
 
-const App = () => {
+const HomePage = lazy(() =>
+  import("./pages/HomePage" /* webpackChunkName: "HomePage" */)
+);
+const RegisterPage = lazy(() =>
+  import("./pages/RegisterPage" /* webpackChunkName: "RegisterPage" */)
+);
+const LoginPage = lazy(() =>
+  import("./pages/LoginPage" /* webpackChunkName: "LoginPage" */)
+);
+const ContactsPage = lazy(() =>
+  import("./pages/ContactsPage.js" /* webpackChunkName: "ContactsPage" */)
+);
+
+export default function App() {
+  const dispatch = useDispatch();
+  const isFetchingCurrentUser = useSelector(authSelectors.getIsFetchingCurrent);
+
+  useEffect(() => {
+    dispatch(authOperations.fetchCurrentUser());
+  }, [dispatch]);
+
   return (
-    <Container title="Phonebook">
-      <ContactForm />
-      <Title title="Contacts" />
-      <Filter />
-      <ContactList />
+    <Container>
+      {isFetchingCurrentUser ? (
+        <Loader />
+      ) : (
+        <Suspense fallback={<Loader />}>
+          <AppBar />
+
+          <Routes>
+            <Route
+              exact
+              path="/"
+              element={
+                <PublicRoute restricted>
+                  <HomePage />
+                </PublicRoute>
+              }
+            />
+
+            <Route
+              exact
+              path="/register"
+              element={
+                <PublicRoute restricted>
+                  <RegisterPage />
+                </PublicRoute>
+              }
+            />
+
+            <Route
+              exact
+              path="/login"
+              element={
+                <PublicRoute restricted>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+
+            <Route
+              exact
+              path="/contacts"
+              element={
+                <PrivateRoute restricted>
+                  <ContactsPage />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </Suspense>
+      )}
       <Toaster position="top-right" />
     </Container>
   );
-};
-
-export default App;
+}

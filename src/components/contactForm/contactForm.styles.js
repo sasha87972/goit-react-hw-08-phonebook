@@ -3,7 +3,7 @@ import styled from "styled-components";
 const Form = styled.form`
   width: 400px;
   border: 1px solid black;
-  padding: 20px;
+  padding: 15px;
 `;
 
 const Button = styled.button`

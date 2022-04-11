@@ -1,17 +1,11 @@
 import React from "react";
-import TitleItem from "./container.styles";
 import PropTypes from "prop-types";
+import Box from "./container.styles";
 
-const Container = ({ title, children }) => {
-  return (
-    <div>
-      <TitleItem>{title}</TitleItem>
-      {children}
-    </div>
-  );
+const Container = ({ children }) => {
+  return <Box>{children}</Box>;
 };
 Container.propTypes = {
-  title: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
 };
 export default Container;

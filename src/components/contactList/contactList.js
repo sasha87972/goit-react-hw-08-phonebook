@@ -1,34 +1,30 @@
-import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
-import toast from "react-hot-toast";
+import { useEffect } from "react";
 import { List, ListItem, Button } from "./contactList.styles";
-import { filterContacts } from "../../redux/selectors";
 import {
-  useFetchContactsQuery,
-  useDeleteContactMutation,
-} from "../../redux/phonebookSlice";
+  deleteContact,
+  fetchContacts,
+} from "../../redux/contacts/contacts-operations";
+import { useSelector, useDispatch } from "react-redux";
+
+import { getFoundedContacts } from "../../redux/contacts/contacts-selectors";
 
 const ContactList = () => {
-  const { data: contacts } = useFetchContactsQuery();
-  const [deleteContact] = useDeleteContactMutation();
-  const filter = useSelector(filterContacts);
-  const normalizedFilter = filter.toLowerCase();
-  let filteredContacts = [];
+  const contacts = useSelector((state) => getFoundedContacts(state));
+  const dispatch = useDispatch();
+  const onDeleteContact = (id) => dispatch(deleteContact(id));
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
-  if (contacts) {
-    filteredContacts = contacts.filter(({ name }) =>
-      name.toLowerCase().includes(normalizedFilter)
-    );
-  }
   return (
     <>
       {contacts && (
         <List>
-          {filteredContacts.map(({ id, name, tel }) => (
+          {contacts.map(({ id, name, tel }) => (
             <ListItem key={id}>
               {name} {tel}{" "}
-              <Button type="button" onClick={() => deleteContact(id)}>
+              <Button type="button" onClick={() => onDeleteContact(id)}>
                 Delete
               </Button>
             </ListItem>

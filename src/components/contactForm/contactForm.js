@@ -1,27 +1,18 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
-import {
-  useFetchContactsQuery,
-  useAddContactMutation,
-} from "../../redux/phonebookSlice";
-import { Form, Button } from "./contactForm.styles";
+import { addContact } from "../../redux/contacts/contacts-operations";
+import { useDispatch } from "react-redux";
+import { Form } from "./contactForm.styles";
 import ContactFormLabeledInput from "../contactFormLabeledInput";
+import StyledBtn from "../button/button";
 
 function ContactForm() {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
-  const { data: contacts } = useFetchContactsQuery();
-  const [addContact] = useAddContactMutation();
+  const dispatch = useDispatch();
   const onFormSubmit = (e) => {
     e.preventDefault();
-    const isOnList = contacts.find(
-      (contact) => contact.name.toLowerCase() === name.toLowerCase()
-    );
-    if (isOnList) {
-      toast.error(`${name} is already in contacts`);
-      return;
-    }
-    addContact({ name, number });
+    dispatch(addContact({ name, number }));
+
     setName("");
     setNumber("");
   };
@@ -62,7 +53,7 @@ function ContactForm() {
         required
         onChange={onInputChange}
       />
-      <Button type="submit">Add contact</Button>
+      <StyledBtn type="submit" title="Add contact" />
     </Form>
   );
 }
